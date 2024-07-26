@@ -118,24 +118,21 @@ static_assert(std::is_same_v<PrependT<1, Vector<2,3>>, Vector<1,2,3>>);
 /**
  * 7. Define RemoveFirst, that removes the first occurence of element R from vector V.
  */
-template<int R, typename type>
+template<int F, typename type>
 struct RemoveFirst;
 
-template<int I, int J, int ...Is>
-struct RemoveFirst<I, Vector<J, Is...>>{
-    using type = std::enable_if_t<I == J, Vector<Is...>>;
+template<int F, int ...Is>
+struct RemoveFirst<F,Vector<F, Is...>>{
+        using type = Vector<Is...>;
 };
 
-template<int I, int J, int K, int ...Is>
-struct RemoveFirst<I, Vector<J, K, Is...>>{
-    using type = std::enable_if_t<I != J,
-    PrependT<J, RemoveFirst<I, Vector<K, Is...>>::type>>;
+template<int F, int I, int ...Is>
+struct RemoveFirst<F,Vector<I, Is...>>{
+    using type = PrependT<I, typename RemoveFirst<F,Vector<Is...>>::type>;
 };
 
-
- static_assert(std::is_same_v<RemoveFirst<1, Vector<1,1,2>>::type, Vector<1,2>>);
-
-
+static_assert(std::is_same_v<RemoveFirst<1, Vector<1,1,2>>::type, Vector<1,2>>);
+static_assert(std::is_same_v<RemoveFirst<1, Vector<0,1,2>>::type, Vector<0,2>>);
 /**
  * 8. Define RemoveAll, that removes all occurences of element R from vector V.
  */
