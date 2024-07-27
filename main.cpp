@@ -163,10 +163,26 @@ static_assert(std::is_same_v<RemoveAll<9, Vector<1,9,2,9,3,9>>::type, Vector<1,2
  * Hint: Use `static constexpr int value = ...` inside the struct.
  */
 
-// Your code goes here:
-// ^ Your code goes here
+template<typename F>
+struct Length;
 
-// static_assert(Length<Vector<1,2,3>>::value == 3);
+
+template<>
+struct Length<Vector<>> {
+    static constexpr int value = 0;
+};
+
+template<int I>
+struct Length<Vector<I>> {
+    static constexpr int value = 1;
+};
+
+template<int I, int ...Is>
+struct Length<Vector<I, Is...>>{
+    static constexpr int value = Length<Vector<Is...>>::value + 1;
+};
+static_assert(Length<Vector<1,2,3>>::value == 3);
+static_assert(Length<Vector<>>::value == 0);
 
 
 /**
