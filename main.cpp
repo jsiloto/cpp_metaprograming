@@ -137,10 +137,25 @@ static_assert(std::is_same_v<RemoveFirst<1, Vector<0,1,2>>::type, Vector<0,2>>);
  * 8. Define RemoveAll, that removes all occurences of element R from vector V.
  */
 
-// Your code goes here:
-// ^ Your code goes here
+template<int F, typename type>
+struct RemoveAll;
 
-// static_assert(std::is_same_v<RemoveAll<9, Vector<1,9,2,9,3,9>>::type, Vector<1,2,3>>);
+template<int F>
+struct RemoveAll<F,Vector<>>{
+    using type = Vector<>;
+};
+
+template<int F, int ...Is>
+struct RemoveAll<F,Vector<F, Is...>>{
+    using type = RemoveAll<F, Vector<Is...>>::type;
+};
+
+template<int F, int I, int ...Is>
+struct RemoveAll<F,Vector<I, Is...>>{
+    using type = PrependT<I, typename RemoveAll<F,Vector<Is...>>::type>;
+};
+
+static_assert(std::is_same_v<RemoveAll<9, Vector<1,9,2,9,3,9>>::type, Vector<1,2,3>>);
 
 
 /**
